@@ -10,7 +10,7 @@ RUN npm install
 
 COPY . .
 
-# Create data dir for SQLite
+# Data directory will be mounted as volume
 RUN mkdir -p /app/data
 
 EXPOSE 3000

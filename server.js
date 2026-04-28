@@ -261,8 +261,14 @@ app.post('/api/ai/improve', auth, async (req, res) => {
     // Build URL and headers based on provider
     let url, headers;
     if (AI_PROVIDER === 'azure') {
-      // Azure OpenAI format
-      url = `${AI_BASE_URL}/openai/deployments/${AI_MODEL}/chat/completions?api-version=2025-01-01-preview`;
+      // Azure OpenAI format - check if URL already has the full path
+      if (AI_BASE_URL.includes('/chat/completions')) {
+        url = AI_BASE_URL;
+      } else if (AI_BASE_URL.includes('/deployments/')) {
+        url = `${AI_BASE_URL}/chat/completions?api-version=2025-01-01-preview`;
+      } else {
+        url = `${AI_BASE_URL}/openai/deployments/${AI_MODEL}/chat/completions?api-version=2025-01-01-preview`;
+      }
       headers = {
         'api-key': AI_API_KEY,
         'Content-Type': 'application/json',
@@ -274,6 +280,7 @@ app.post('/api/ai/improve', auth, async (req, res) => {
         'Authorization': `Bearer ${AI_API_KEY}`,
         'Content-Type': 'application/json',
       };
+    }
     }
     
     const response = await fetch(url, {
