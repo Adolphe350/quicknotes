@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickNotes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    /* Auth Screen */
+    .auth-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    
+    .auth-box {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .auth-box h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    .auth-box p {
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #6366f1;
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+    }
+    
+    .auth-switch {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255,255,255,0.6);
+    }
+    
+    .auth-switch a {
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .error-msg {
+      background: rgba(239,68,68,0.2);
+      border: 1px solid rgba(239,68,68,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: #fca5a5;
+      font-size: 0.9rem;
+    }
+    
+    /* App Screen */
+    .app-container { display: none; }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .user-name {
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .logout-btn {
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    /* New Note */
+    .new-note {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .new-note textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 1rem;
+      resize: vertical;
+      font-family: inherit;
+    }
+    
+    .new-note textarea:focus {
+      outline: none;
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .new-note textarea::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .new-note-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+    
+    .save-btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .save-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .save-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* Notes List */
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .notes-header h2 {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.8);
+    }
+    
+    .notes-count {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+    }
+    
+    .notes-list {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .note-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .note-card:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+    }
+    
+    .note-content {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    
+    .note-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+    }
+    
+    .note-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .note-actions button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    
+    .note-actions button:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .note-actions .delete-btn:hover {
+      background: rgba(239,68,68,0.3);
+      color: #fca5a5;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .empty-state h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,0.7);
+    }
+    
+    /* Edit Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active { display: flex; }
+    
+    .modal {
+      background: #1a1a2e;
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .modal h3 {
+      margin-bottom: 20px;
+    }
+    
+    .modal textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 1rem;
+      resize: vertical;
+      font-family: inherit;
+      margin-bottom: 20px;
+    }
+    
+    .modal textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .modal-actions button {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .cancel-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    
+    .update-btn {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border: none;
+      color: #fff;
+    }
+    
+    /* Mobile */
+    @media (max-width: 600px) {
+      .auth-box { padding: 30px 20px; }
+      .header { flex-direction: column; gap: 15px; text-align: center; }
+      .note-meta { flex-direction: column; gap: 10px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Auth Screen -->
+  <div class="auth-container" id="authScreen">
+    <div class="auth-box">
+      <h1>📝 QuickNotes</h1>
+      <p>Fast notes, anywhere</p>
+      
+      <div id="errorMsg" class="error-msg" style="display:none;"></div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+      
+      <form id="registerForm" style="display:none;">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="registerName" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="registerEmail" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="registerPassword" required placeholder="••••••••" minlength="6">
+        </div>
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+      
+      <p class="auth-switch" id="authSwitch">
+        Don't have an account? <a href="#" id="switchToRegister">Sign up</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- App Screen -->
+  <div class="app-container" id="appScreen">
+    <div class="container">
+      <header class="header">
+        <div class="logo">📝 QuickNotes</div>
+        <div class="user-info">
+          <span class="user-name" id="userName"></span>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+      </header>
+      
+      <div class="new-note">
+        <textarea id="noteInput" placeholder="Write a quick note... (Ctrl+Enter to save)"></textarea>
+        <div class="new-note-actions">
+          <button class="save-btn" id="saveBtn" disabled>Save Note</button>
+        </div>
+      </div>
+      
+      <div class="notes-header">
+        <h2>Your Notes</h2>
+        <span class="notes-count" id="notesCount">0 notes</span>
+      </div>
+      
+      <div class="notes-list" id="notesList"></div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h3>Edit Note</h3>
+      <textarea id="editContent"></textarea>
+      <div class="modal-actions">
+        <button class="cancel-btn" id="cancelEdit">Cancel</button>
+        <button class="update-btn" id="updateNote">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentUser = null;
+    let notes = [];
+    let editingNoteId = null;
+
+    // Elements
+    const authScreen = document.getElementById('authScreen');
+    const appScreen = document.getElementById('appScreen');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const authSwitch = document.getElementById('authSwitch');
+    const errorMsg = document.getElementById('errorMsg');
+    const noteInput = document.getElementById('noteInput');
+    const saveBtn = document.getElementById('saveBtn');
+    const notesList = document.getElementById('notesList');
+    const notesCount = document.getElementById('notesCount');
+    const userName = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const editModal = document.getElementById('editModal');
+    const editContent = document.getElementById('editContent');
+
+    // Check auth on load
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/me');
+        if (res.ok) {
+          const data = await res.json();
+          currentUser = data.user;
+          showApp();
+        }
+      } catch (e) {}
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+      setTimeout(() => errorMsg.style.display = 'none', 5000);
+    }
+
+    function showApp() {
+      authScreen.style.display = 'none';
+      appScreen.style.display = 'block';
+      userName.textContent = currentUser.name || currentUser.email;
+      loadNotes();
+    }
+
+    function showAuth() {
+      authScreen.style.display = 'flex';
+      appScreen.style.display = 'none';
+      currentUser = null;
+      notes = [];
+    }
+
+    // Auth handlers
+    document.getElementById('switchToRegister').addEventListener('click', (e) => {
+      e.preventDefault();
+      const isLogin = loginForm.style.display !== 'none';
+      loginForm.style.display = isLogin ? 'none' : 'block';
+      registerForm.style.display = isLogin ? 'block' : 'none';
+      authSwitch.innerHTML = isLogin 
+        ? 'Already have an account? <a href="#" id="switchToRegister">Sign in</a>'
+        : 'Don\'t have an account? <a href="#" id="switchToRegister">Sign up</a>';
+      document.getElementById('switchToRegister').addEventListener('click', arguments.callee);
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value,
+            password: document.getElementById('loginPassword').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          currentUser = data.user;
+          showApp();
+        } else {
+          showError(data.error);
+        }
+      } catch (e) {
+        showError('Connection error');
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('registerName').value,
+            email: document.getElementById('registerEmail').value,
+            password: document.getElementById('registerPassword').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          currentUser = data.user;
+          showApp();
+        } else {
+          showError(data.error);
+        }
+      } catch (e) {
+        showError('Connection error');
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/api/logout', { method: 'POST' });
+      showAuth();
+    });
+
+    // Notes
+    async function loadNotes() {
+      try {
+        const res = await fetch('/api/notes');
+        const data = await res.json();
+        notes = data.notes;
+        renderNotes();
+      } catch (e) {
+        console.error('Failed to load notes');
+      }
+    }
+
+    function renderNotes() {
+      notesCount.textContent = `${notes.length} note${notes.length !== 1 ? 's' : ''}`;
+      
+      if (notes.length === 0) {
+        notesList.innerHTML = `
+          <div class="empty-state">
+            <h3>No notes yet</h3>
+            <p>Write your first quick note above!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      notesList.innerHTML = notes.map(note => `
+        <div class="note-card" data-id="${note.id}">
+          <div class="note-content">${escapeHtml(note.content)}</div>
+          <div class="note-meta">
+            <span>${formatDate(note.updated_at)}</span>
+            <div class="note-actions">
+              <button onclick="editNote(${note.id})">Edit</button>
+              <button class="delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Note input handling
+    noteInput.addEventListener('input', () => {
+      saveBtn.disabled = !noteInput.value.trim();
+    });
+
+    noteInput.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        saveNote();
+      }
+    });
+
+    saveBtn.addEventListener('click', saveNote);
+
+    async function saveNote() {
+      const content = noteInput.value.trim();
+      if (!content) return;
+      
+      saveBtn.disabled = true;
+      try {
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          notes.unshift(data.note);
+          renderNotes();
+          noteInput.value = '';
+        }
+      } catch (e) {
+        console.error('Failed to save');
+      }
+      saveBtn.disabled = false;
+    }
+
+    // Edit note
+    window.editNote = function(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+      
+      editingNoteId = id;
+      editContent.value = note.content;
+      editModal.classList.add('active');
+      editContent.focus();
+    };
+
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+      editModal.classList.remove('active');
+      editingNoteId = null;
+    });
+
+    document.getElementById('updateNote').addEventListener('click', async () => {
+      if (!editingNoteId) return;
+      
+      try {
+        const res = await fetch(`/api/notes/${editingNoteId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: editContent.value })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const idx = notes.findIndex(n => n.id === editingNoteId);
+          if (idx !== -1) notes[idx] = data.note;
+          notes.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+          renderNotes();
+          editModal.classList.remove('active');
+          editingNoteId = null;
+        }
+      } catch (e) {
+        console.error('Failed to update');
+      }
+    });
+
+    // Delete note
+    window.deleteNote = async function(id) {
+      if (!confirm('Delete this note?')) return;
+      
+      try {
+        const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          notes = notes.filter(n => n.id !== id);
+          renderNotes();
+        }
+      } catch (e) {
+        console.error('Failed to delete');
+      }
+    };
+
+    // Close modal on overlay click
+    editModal.addEventListener('click', (e) => {
+      if (e.target === editModal) {
+        editModal.classList.remove('active');
+        editingNoteId = null;
+      }
+    });
+
+    // Init
+    checkAuth();
+  </script>
+</body>
+</html>
