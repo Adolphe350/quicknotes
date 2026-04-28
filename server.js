@@ -281,7 +281,6 @@ app.post('/api/ai/improve', auth, async (req, res) => {
         'Content-Type': 'application/json',
       };
     }
-    }
     
     const response = await fetch(url, {
       method: 'POST',
