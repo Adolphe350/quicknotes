@@ -3,23 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickNotes</title>
+  <title>QuickNotes Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
       min-height: 100vh;
       color: #fff;
     }
     
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
     
     /* Auth Screen */
     .auth-container {
@@ -30,42 +26,25 @@
     }
     
     .auth-box {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       backdrop-filter: blur(10px);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 40px;
       width: 100%;
-      max-width: 400px;
-      border: 1px solid rgba(255,255,255,0.1);
+      max-width: 420px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
     
-    .auth-box h1 {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      text-align: center;
-    }
+    .auth-box h1 { font-size: 2rem; margin-bottom: 8px; text-align: center; }
+    .auth-box > p { color: rgba(255,255,255,0.5); text-align: center; margin-bottom: 30px; }
     
-    .auth-box p {
-      color: rgba(255,255,255,0.6);
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: rgba(255,255,255,0.8); }
     
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    
-    .form-group input {
+    .form-group input, .form-group select {
       width: 100%;
       padding: 14px 16px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
       background: rgba(255,255,255,0.05);
       color: #fff;
@@ -73,10 +52,10 @@
       transition: all 0.2s;
     }
     
-    .form-group input:focus {
+    .form-group input:focus, .form-group select:focus {
       outline: none;
       border-color: #6366f1;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
     }
     
     .btn {
@@ -92,66 +71,54 @@
       transition: all 0.2s;
     }
     
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(99,102,241,0.3);
-    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(99,102,241,0.3); }
     
-    .auth-switch {
-      text-align: center;
-      margin-top: 20px;
-      color: rgba(255,255,255,0.6);
-    }
-    
-    .auth-switch a {
-      color: #6366f1;
-      text-decoration: none;
-      font-weight: 500;
-    }
+    .auth-switch { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); }
+    .auth-switch a { color: #6366f1; text-decoration: none; font-weight: 500; }
     
     .error-msg {
-      background: rgba(239,68,68,0.2);
+      background: rgba(239,68,68,0.15);
       border: 1px solid rgba(239,68,68,0.3);
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-bottom: 20px;
       color: #fca5a5;
       font-size: 0.9rem;
     }
     
-    /* App Screen */
+    /* App Layout */
     .app-container { display: none; }
     
+    .app-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      min-height: calc(100vh - 100px);
+    }
+    
+    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
     
     .logo {
       font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      background: linear-gradient(135deg, #6366f1, #a855f7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .user-name {
-      color: rgba(255,255,255,0.7);
-    }
+    .user-info { display: flex; align-items: center; gap: 15px; }
+    .user-name { color: rgba(255,255,255,0.6); }
     
     .logout-btn {
       padding: 8px 16px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
       background: transparent;
       color: #fff;
@@ -159,51 +126,172 @@
       transition: all 0.2s;
     }
     
-    .logout-btn:hover {
-      background: rgba(255,255,255,0.1);
+    .logout-btn:hover { background: rgba(255,255,255,0.1); }
+    
+    /* Sidebar */
+    .sidebar {
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
     }
+    
+    .sidebar-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 16px;
+      padding: 0 12px;
+    }
+    
+    .group-list { list-style: none; }
+    
+    .group-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+    
+    .group-item:hover { background: rgba(255,255,255,0.05); }
+    .group-item.active { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.3); }
+    
+    .group-item-left { display: flex; align-items: center; gap: 10px; }
+    .group-icon { font-size: 1.1rem; }
+    .group-name { font-weight: 500; }
+    .group-count {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
+    
+    .add-group-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,0.2);
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+    
+    .add-group-btn:hover { border-color: #6366f1; color: #6366f1; }
+    
+    /* Main Content */
+    .main-content { flex: 1; }
+    
+    /* Search */
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      color: #fff;
+      font-size: 1rem;
+    }
+    
+    .search-input:focus { outline: none; border-color: #6366f1; }
+    .search-input::placeholder { color: rgba(255,255,255,0.3); }
     
     /* New Note */
     .new-note {
-      background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 30px;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
     }
+    
+    .new-note-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .group-select {
+      padding: 10px 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      min-width: 150px;
+    }
+    
+    .group-select option { background: #1a1a2e; }
     
     .new-note textarea {
       width: 100%;
-      min-height: 100px;
+      min-height: 120px;
       padding: 16px;
       border: none;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
       color: #fff;
       font-size: 1rem;
       resize: vertical;
       font-family: inherit;
+      line-height: 1.6;
     }
     
-    .new-note textarea:focus {
-      outline: none;
-      background: rgba(255,255,255,0.08);
-    }
-    
-    .new-note textarea::placeholder {
-      color: rgba(255,255,255,0.4);
-    }
+    .new-note textarea:focus { outline: none; background: rgba(255,255,255,0.05); }
+    .new-note textarea::placeholder { color: rgba(255,255,255,0.3); }
     
     .new-note-actions {
       display: flex;
-      justify-content: flex-end;
-      margin-top: 12px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
     }
     
+    .ai-actions { display: flex; gap: 8px; }
+    
+    .ai-btn {
+      padding: 8px 14px;
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 8px;
+      background: rgba(139,92,246,0.1);
+      color: #a78bfa;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .ai-btn:hover { background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.5); }
+    .ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .ai-btn.loading { pointer-events: none; }
+    .ai-btn.loading::after { content: '...'; }
+    
     .save-btn {
-      padding: 10px 24px;
+      padding: 12px 28px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
       color: #fff;
       font-weight: 600;
@@ -211,17 +299,10 @@
       transition: all 0.2s;
     }
     
-    .save-btn:hover {
-      transform: translateY(-2px);
-    }
+    .save-btn:hover { transform: translateY(-2px); }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     
-    .save-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    /* Notes List */
+    /* Notes Header */
     .notes-header {
       display: flex;
       justify-content: space-between;
@@ -229,96 +310,87 @@
       margin-bottom: 20px;
     }
     
-    .notes-header h2 {
-      font-size: 1.2rem;
-      color: rgba(255,255,255,0.8);
-    }
+    .notes-title { font-size: 1.3rem; font-weight: 600; }
+    .notes-count { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
     
-    .notes-count {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.9rem;
-    }
-    
-    .notes-list {
+    /* Notes Grid */
+    .notes-grid {
       display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 16px;
     }
     
     .note-card {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       border-radius: 16px;
       padding: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.06);
       transition: all 0.2s;
       cursor: pointer;
     }
     
-    .note-card:hover {
-      background: rgba(255,255,255,0.08);
-      transform: translateY(-2px);
+    .note-card:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+    
+    .note-group-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      margin-bottom: 12px;
     }
     
     .note-content {
       white-space: pre-wrap;
       line-height: 1.6;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
+      color: rgba(255,255,255,0.85);
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     
     .note-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.4);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
     }
     
-    .note-actions {
-      display: flex;
-      gap: 8px;
-    }
+    .note-actions { display: flex; gap: 6px; }
     
     .note-actions button {
-      padding: 6px 12px;
+      padding: 6px 10px;
       border: none;
       border-radius: 6px;
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       transition: all 0.2s;
     }
     
-    .note-actions button:hover {
-      background: rgba(255,255,255,0.2);
-    }
-    
-    .note-actions .delete-btn:hover {
-      background: rgba(239,68,68,0.3);
-      color: #fca5a5;
-    }
+    .note-actions button:hover { background: rgba(255,255,255,0.15); }
+    .note-actions .delete-btn:hover { background: rgba(239,68,68,0.3); color: #fca5a5; }
     
     .empty-state {
       text-align: center;
-      padding: 60px 20px;
-      color: rgba(255,255,255,0.5);
+      padding: 80px 20px;
+      color: rgba(255,255,255,0.4);
     }
     
-    .empty-state h3 {
-      font-size: 1.3rem;
-      margin-bottom: 8px;
-      color: rgba(255,255,255,0.7);
-    }
+    .empty-state h3 { font-size: 1.4rem; margin-bottom: 10px; color: rgba(255,255,255,0.6); }
     
-    /* Edit Modal */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(5px);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -329,67 +401,95 @@
     
     .modal {
       background: #1a1a2e;
-      border-radius: 20px;
-      padding: 30px;
+      border-radius: 24px;
+      padding: 32px;
       width: 100%;
-      max-width: 500px;
+      max-width: 550px;
       border: 1px solid rgba(255,255,255,0.1);
     }
     
-    .modal h3 {
-      margin-bottom: 20px;
-    }
+    .modal h3 { margin-bottom: 24px; font-size: 1.3rem; }
     
-    .modal textarea {
+    .modal textarea, .modal input {
       width: 100%;
-      min-height: 150px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.2);
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 12px;
       background: rgba(255,255,255,0.05);
       color: #fff;
       font-size: 1rem;
-      resize: vertical;
       font-family: inherit;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     
-    .modal textarea:focus {
-      outline: none;
-      border-color: #6366f1;
-    }
+    .modal textarea { min-height: 180px; resize: vertical; }
+    .modal textarea:focus, .modal input:focus { outline: none; border-color: #6366f1; }
     
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-    }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
     
     .modal-actions button {
-      padding: 10px 20px;
-      border-radius: 10px;
+      padding: 12px 24px;
+      border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
     
-    .cancel-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
+    .cancel-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+    .cancel-btn:hover { background: rgba(255,255,255,0.1); }
+    .update-btn, .create-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; color: #fff; }
+    .delete-group-btn { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+    .delete-group-btn:hover { background: rgba(239,68,68,0.3); }
+    
+    /* Color picker */
+    .color-options { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    
+    .color-option {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
     }
     
-    .update-btn {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      border: none;
-      color: #fff;
+    .color-option:hover { transform: scale(1.1); }
+    .color-option.selected { border-color: #fff; }
+    
+    /* Icon picker */
+    .icon-options { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    
+    .icon-option {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+      border: 2px solid transparent;
     }
+    
+    .icon-option:hover { background: rgba(255,255,255,0.1); }
+    .icon-option.selected { border-color: #6366f1; background: rgba(99,102,241,0.2); }
     
     /* Mobile */
+    @media (max-width: 900px) {
+      .app-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; margin-bottom: 24px; }
+      .notes-grid { grid-template-columns: 1fr; }
+    }
+    
     @media (max-width: 600px) {
       .auth-box { padding: 30px 20px; }
       .header { flex-direction: column; gap: 15px; text-align: center; }
-      .note-meta { flex-direction: column; gap: 10px; align-items: flex-start; }
+      .new-note-header { flex-direction: column; }
+      .new-note-actions { flex-direction: column; gap: 12px; }
+      .ai-actions { justify-content: center; flex-wrap: wrap; }
+      .save-btn { width: 100%; }
     }
   </style>
 </head>
@@ -397,8 +497,8 @@
   <!-- Auth Screen -->
   <div class="auth-container" id="authScreen">
     <div class="auth-box">
-      <h1>📝 QuickNotes</h1>
-      <p>Fast notes, anywhere</p>
+      <h1>📝 QuickNotes Pro</h1>
+      <p>Organize your thoughts, powered by AI</p>
       
       <div id="errorMsg" class="error-msg" style="display:none;"></div>
       
@@ -440,37 +540,99 @@
   <div class="app-container" id="appScreen">
     <div class="container">
       <header class="header">
-        <div class="logo">📝 QuickNotes</div>
+        <div class="logo">📝 QuickNotes Pro</div>
         <div class="user-info">
           <span class="user-name" id="userName"></span>
           <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
       </header>
       
-      <div class="new-note">
-        <textarea id="noteInput" placeholder="Write a quick note... (Ctrl+Enter to save)"></textarea>
-        <div class="new-note-actions">
-          <button class="save-btn" id="saveBtn" disabled>Save Note</button>
-        </div>
+      <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="sidebar-title">Groups</div>
+          <ul class="group-list" id="groupList"></ul>
+          <button class="add-group-btn" id="addGroupBtn">
+            <span>+</span> New Group
+          </button>
+        </aside>
+        
+        <!-- Main -->
+        <main class="main-content">
+          <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search notes...">
+          </div>
+          
+          <div class="new-note">
+            <div class="new-note-header">
+              <select class="group-select" id="noteGroupSelect">
+                <option value="">No group</option>
+              </select>
+            </div>
+            <textarea id="noteInput" placeholder="Write a quick note... (Ctrl+Enter to save)"></textarea>
+            <div class="new-note-actions">
+              <div class="ai-actions" id="aiActions" style="display:none;">
+                <button class="ai-btn" data-action="fix" title="Fix errors">✨ Fix</button>
+                <button class="ai-btn" data-action="improve" title="Improve writing">🚀 Improve</button>
+                <button class="ai-btn" data-action="shorten" title="Make shorter">📐 Shorten</button>
+                <button class="ai-btn" data-action="professional" title="Professional tone">💼 Pro</button>
+              </div>
+              <button class="save-btn" id="saveBtn" disabled>Save Note</button>
+            </div>
+          </div>
+          
+          <div class="notes-header">
+            <h2 class="notes-title" id="notesTitle">All Notes</h2>
+            <span class="notes-count" id="notesCount">0 notes</span>
+          </div>
+          
+          <div class="notes-grid" id="notesList"></div>
+        </main>
       </div>
-      
-      <div class="notes-header">
-        <h2>Your Notes</h2>
-        <span class="notes-count" id="notesCount">0 notes</span>
-      </div>
-      
-      <div class="notes-list" id="notesList"></div>
     </div>
   </div>
 
-  <!-- Edit Modal -->
+  <!-- Edit Note Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal">
       <h3>Edit Note</h3>
+      <select class="group-select" id="editGroupSelect" style="margin-bottom:16px;">
+        <option value="">No group</option>
+      </select>
       <textarea id="editContent"></textarea>
+      <div class="ai-actions" id="editAiActions" style="margin-bottom:16px; display:none;">
+        <button class="ai-btn" data-action="fix" data-target="edit">✨ Fix</button>
+        <button class="ai-btn" data-action="improve" data-target="edit">🚀 Improve</button>
+        <button class="ai-btn" data-action="shorten" data-target="edit">📐 Shorten</button>
+        <button class="ai-btn" data-action="professional" data-target="edit">💼 Pro</button>
+      </div>
       <div class="modal-actions">
         <button class="cancel-btn" id="cancelEdit">Cancel</button>
         <button class="update-btn" id="updateNote">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Modal -->
+  <div class="modal-overlay" id="groupModal">
+    <div class="modal">
+      <h3 id="groupModalTitle">New Group</h3>
+      <div class="form-group">
+        <label>Group Name</label>
+        <input type="text" id="groupNameInput" placeholder="e.g., Client ABC, Personal Ideas">
+      </div>
+      <div class="form-group">
+        <label>Icon</label>
+        <div class="icon-options" id="iconOptions"></div>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-options" id="colorOptions"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="delete-group-btn" id="deleteGroupBtn" style="display:none;">Delete</button>
+        <button class="cancel-btn" id="cancelGroup">Cancel</button>
+        <button class="create-btn" id="saveGroupBtn">Create</button>
       </div>
     </div>
   </div>
@@ -479,23 +641,35 @@
     // State
     let currentUser = null;
     let notes = [];
+    let groups = [];
+    let selectedGroupId = null;
     let editingNoteId = null;
+    let editingGroupId = null;
+    let aiEnabled = false;
+    let ungroupedCount = 0;
+
+    // Config
+    const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6'];
+    const ICONS = ['📁', '📝', '💼', '🏢', '👤', '💡', '🎯', '📊', '🔧', '🎨', '📱', '💻', '🏠', '✈️', '📚', '💰'];
 
     // Elements
     const authScreen = document.getElementById('authScreen');
     const appScreen = document.getElementById('appScreen');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
-    const authSwitch = document.getElementById('authSwitch');
     const errorMsg = document.getElementById('errorMsg');
     const noteInput = document.getElementById('noteInput');
     const saveBtn = document.getElementById('saveBtn');
     const notesList = document.getElementById('notesList');
     const notesCount = document.getElementById('notesCount');
+    const notesTitle = document.getElementById('notesTitle');
     const userName = document.getElementById('userName');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const editModal = document.getElementById('editModal');
-    const editContent = document.getElementById('editContent');
+    const groupList = document.getElementById('groupList');
+    const noteGroupSelect = document.getElementById('noteGroupSelect');
+    const editGroupSelect = document.getElementById('editGroupSelect');
+    const searchInput = document.getElementById('searchInput');
+    const aiActions = document.getElementById('aiActions');
+    const editAiActions = document.getElementById('editAiActions');
 
     // Check auth on load
     async function checkAuth() {
@@ -509,6 +683,16 @@
       } catch (e) {}
     }
 
+    async function checkAI() {
+      try {
+        const res = await fetch('/api/ai/status');
+        const data = await res.json();
+        aiEnabled = data.enabled;
+        aiActions.style.display = aiEnabled ? 'flex' : 'none';
+        editAiActions.style.display = aiEnabled ? 'flex' : 'none';
+      } catch (e) {}
+    }
+
     function showError(msg) {
       errorMsg.textContent = msg;
       errorMsg.style.display = 'block';
@@ -519,7 +703,9 @@
       authScreen.style.display = 'none';
       appScreen.style.display = 'block';
       userName.textContent = currentUser.name || currentUser.email;
+      loadGroups();
       loadNotes();
+      checkAI();
     }
 
     function showAuth() {
@@ -527,6 +713,7 @@
       appScreen.style.display = 'none';
       currentUser = null;
       notes = [];
+      groups = [];
     }
 
     // Auth handlers
@@ -535,7 +722,7 @@
       const isLogin = loginForm.style.display !== 'none';
       loginForm.style.display = isLogin ? 'none' : 'block';
       registerForm.style.display = isLogin ? 'block' : 'none';
-      authSwitch.innerHTML = isLogin 
+      document.getElementById('authSwitch').innerHTML = isLogin 
         ? 'Already have an account? <a href="#" id="switchToRegister">Sign in</a>'
         : 'Don\'t have an account? <a href="#" id="switchToRegister">Sign up</a>';
       document.getElementById('switchToRegister').addEventListener('click', arguments.callee);
@@ -588,15 +775,215 @@
       }
     });
 
-    logoutBtn.addEventListener('click', async () => {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
       await fetch('/api/logout', { method: 'POST' });
       showAuth();
+    });
+
+    // Groups
+    async function loadGroups() {
+      try {
+        const res = await fetch('/api/groups');
+        const data = await res.json();
+        groups = data.groups;
+        ungroupedCount = data.ungroupedCount;
+        renderGroups();
+        updateGroupSelects();
+      } catch (e) {
+        console.error('Failed to load groups');
+      }
+    }
+
+    function renderGroups() {
+      let html = `
+        <li class="group-item ${selectedGroupId === null ? 'active' : ''}" data-id="all">
+          <div class="group-item-left">
+            <span class="group-icon">📋</span>
+            <span class="group-name">All Notes</span>
+          </div>
+          <span class="group-count">${notes.length || '0'}</span>
+        </li>
+        <li class="group-item ${selectedGroupId === 'ungrouped' ? 'active' : ''}" data-id="ungrouped">
+          <div class="group-item-left">
+            <span class="group-icon">📄</span>
+            <span class="group-name">Ungrouped</span>
+          </div>
+          <span class="group-count">${ungroupedCount}</span>
+        </li>
+      `;
+      
+      groups.forEach(g => {
+        html += `
+          <li class="group-item ${selectedGroupId == g.id ? 'active' : ''}" data-id="${g.id}" style="border-left: 3px solid ${g.color};">
+            <div class="group-item-left">
+              <span class="group-icon">${g.icon}</span>
+              <span class="group-name">${escapeHtml(g.name)}</span>
+            </div>
+            <span class="group-count">${g.noteCount}</span>
+          </li>
+        `;
+      });
+      
+      groupList.innerHTML = html;
+      
+      // Add click handlers
+      groupList.querySelectorAll('.group-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          const id = item.dataset.id;
+          if (id === 'all') {
+            selectedGroupId = null;
+            notesTitle.textContent = 'All Notes';
+          } else if (id === 'ungrouped') {
+            selectedGroupId = 'ungrouped';
+            notesTitle.textContent = 'Ungrouped Notes';
+          } else {
+            selectedGroupId = id;
+            const group = groups.find(g => g.id == id);
+            notesTitle.textContent = group ? `${group.icon} ${group.name}` : 'Notes';
+          }
+          loadNotes();
+          renderGroups();
+        });
+        
+        // Double click to edit (except All and Ungrouped)
+        if (item.dataset.id !== 'all' && item.dataset.id !== 'ungrouped') {
+          item.addEventListener('dblclick', () => openGroupModal(item.dataset.id));
+        }
+      });
+    }
+
+    function updateGroupSelects() {
+      const options = `<option value="">No group</option>` + 
+        groups.map(g => `<option value="${g.id}">${g.icon} ${g.name}</option>`).join('');
+      noteGroupSelect.innerHTML = options;
+      editGroupSelect.innerHTML = options;
+    }
+
+    // Group Modal
+    function openGroupModal(groupId = null) {
+      editingGroupId = groupId;
+      const modal = document.getElementById('groupModal');
+      const title = document.getElementById('groupModalTitle');
+      const nameInput = document.getElementById('groupNameInput');
+      const saveBtn = document.getElementById('saveGroupBtn');
+      const deleteBtn = document.getElementById('deleteGroupBtn');
+      
+      // Render pickers
+      renderIconPicker();
+      renderColorPicker();
+      
+      if (groupId) {
+        const group = groups.find(g => g.id == groupId);
+        title.textContent = 'Edit Group';
+        saveBtn.textContent = 'Update';
+        deleteBtn.style.display = 'block';
+        nameInput.value = group?.name || '';
+        selectIcon(group?.icon || '📁');
+        selectColor(group?.color || '#6366f1');
+      } else {
+        title.textContent = 'New Group';
+        saveBtn.textContent = 'Create';
+        deleteBtn.style.display = 'none';
+        nameInput.value = '';
+        selectIcon('📁');
+        selectColor('#6366f1');
+      }
+      
+      modal.classList.add('active');
+      nameInput.focus();
+    }
+
+    let selectedIcon = '📁';
+    let selectedColor = '#6366f1';
+
+    function renderIconPicker() {
+      const container = document.getElementById('iconOptions');
+      container.innerHTML = ICONS.map(icon => 
+        `<div class="icon-option ${icon === selectedIcon ? 'selected' : ''}" data-icon="${icon}">${icon}</div>`
+      ).join('');
+      container.querySelectorAll('.icon-option').forEach(el => {
+        el.addEventListener('click', () => selectIcon(el.dataset.icon));
+      });
+    }
+
+    function selectIcon(icon) {
+      selectedIcon = icon;
+      document.querySelectorAll('.icon-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.icon === icon);
+      });
+    }
+
+    function renderColorPicker() {
+      const container = document.getElementById('colorOptions');
+      container.innerHTML = COLORS.map(color => 
+        `<div class="color-option ${color === selectedColor ? 'selected' : ''}" data-color="${color}" style="background:${color};"></div>`
+      ).join('');
+      container.querySelectorAll('.color-option').forEach(el => {
+        el.addEventListener('click', () => selectColor(el.dataset.color));
+      });
+    }
+
+    function selectColor(color) {
+      selectedColor = color;
+      document.querySelectorAll('.color-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.color === color);
+      });
+    }
+
+    document.getElementById('addGroupBtn').addEventListener('click', () => openGroupModal());
+    document.getElementById('cancelGroup').addEventListener('click', () => {
+      document.getElementById('groupModal').classList.remove('active');
+    });
+
+    document.getElementById('saveGroupBtn').addEventListener('click', async () => {
+      const name = document.getElementById('groupNameInput').value.trim();
+      if (!name) return;
+      
+      try {
+        const url = editingGroupId ? `/api/groups/${editingGroupId}` : '/api/groups';
+        const method = editingGroupId ? 'PUT' : 'POST';
+        
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, icon: selectedIcon, color: selectedColor })
+        });
+        
+        if (res.ok) {
+          document.getElementById('groupModal').classList.remove('active');
+          loadGroups();
+        }
+      } catch (e) {
+        console.error('Failed to save group');
+      }
+    });
+
+    document.getElementById('deleteGroupBtn').addEventListener('click', async () => {
+      if (!editingGroupId || !confirm('Delete this group? Notes will be moved to Ungrouped.')) return;
+      
+      try {
+        const res = await fetch(`/api/groups/${editingGroupId}`, { method: 'DELETE' });
+        if (res.ok) {
+          document.getElementById('groupModal').classList.remove('active');
+          if (selectedGroupId == editingGroupId) selectedGroupId = null;
+          loadGroups();
+          loadNotes();
+        }
+      } catch (e) {
+        console.error('Failed to delete group');
+      }
     });
 
     // Notes
     async function loadNotes() {
       try {
-        const res = await fetch('/api/notes');
+        let url = '/api/notes';
+        const params = new URLSearchParams();
+        if (selectedGroupId) params.set('group_id', selectedGroupId);
+        if (searchInput.value) params.set('search', searchInput.value);
+        if (params.toString()) url += '?' + params.toString();
+        
+        const res = await fetch(url);
         const data = await res.json();
         notes = data.notes;
         renderNotes();
@@ -610,7 +997,7 @@
       
       if (notes.length === 0) {
         notesList.innerHTML = `
-          <div class="empty-state">
+          <div class="empty-state" style="grid-column: 1/-1;">
             <h3>No notes yet</h3>
             <p>Write your first quick note above!</p>
           </div>
@@ -618,18 +1005,26 @@
         return;
       }
       
-      notesList.innerHTML = notes.map(note => `
-        <div class="note-card" data-id="${note.id}">
-          <div class="note-content">${escapeHtml(note.content)}</div>
-          <div class="note-meta">
-            <span>${formatDate(note.updated_at)}</span>
-            <div class="note-actions">
-              <button onclick="editNote(${note.id})">Edit</button>
-              <button class="delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+      notesList.innerHTML = notes.map(note => {
+        const badgeStyle = note.group_color ? `background: ${note.group_color}22; color: ${note.group_color};` : 'background: rgba(255,255,255,0.1);';
+        const badge = note.group_name 
+          ? `<div class="note-group-badge" style="${badgeStyle}">${note.group_icon || '📁'} ${escapeHtml(note.group_name)}</div>`
+          : '';
+        
+        return `
+          <div class="note-card" data-id="${note.id}">
+            ${badge}
+            <div class="note-content">${escapeHtml(note.content)}</div>
+            <div class="note-meta">
+              <span>${formatDate(note.updated_at)}</span>
+              <div class="note-actions">
+                <button onclick="editNote(${note.id})">Edit</button>
+                <button class="delete-btn" onclick="deleteNote(${note.id})">Delete</button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function escapeHtml(text) {
@@ -653,15 +1048,13 @@
       return date.toLocaleDateString();
     }
 
-    // Note input handling
+    // Note input
     noteInput.addEventListener('input', () => {
       saveBtn.disabled = !noteInput.value.trim();
     });
 
     noteInput.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') {
-        saveNote();
-      }
+      if (e.ctrlKey && e.key === 'Enter') saveNote();
     });
 
     saveBtn.addEventListener('click', saveNote);
@@ -675,13 +1068,13 @@
         const res = await fetch('/api/notes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content })
+          body: JSON.stringify({ content, group_id: noteGroupSelect.value || null })
         });
         const data = await res.json();
         if (res.ok) {
-          notes.unshift(data.note);
-          renderNotes();
           noteInput.value = '';
+          loadNotes();
+          loadGroups();
         }
       } catch (e) {
         console.error('Failed to save');
@@ -689,19 +1082,27 @@
       saveBtn.disabled = false;
     }
 
+    // Search
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(loadNotes, 300);
+    });
+
     // Edit note
     window.editNote = function(id) {
       const note = notes.find(n => n.id === id);
       if (!note) return;
       
       editingNoteId = id;
-      editContent.value = note.content;
-      editModal.classList.add('active');
-      editContent.focus();
+      document.getElementById('editContent').value = note.content;
+      editGroupSelect.value = note.group_id || '';
+      document.getElementById('editModal').classList.add('active');
+      document.getElementById('editContent').focus();
     };
 
     document.getElementById('cancelEdit').addEventListener('click', () => {
-      editModal.classList.remove('active');
+      document.getElementById('editModal').classList.remove('active');
       editingNoteId = null;
     });
 
@@ -712,16 +1113,16 @@
         const res = await fetch(`/api/notes/${editingNoteId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: editContent.value })
+          body: JSON.stringify({ 
+            content: document.getElementById('editContent').value,
+            group_id: editGroupSelect.value || null
+          })
         });
-        const data = await res.json();
         if (res.ok) {
-          const idx = notes.findIndex(n => n.id === editingNoteId);
-          if (idx !== -1) notes[idx] = data.note;
-          notes.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-          renderNotes();
-          editModal.classList.remove('active');
+          document.getElementById('editModal').classList.remove('active');
           editingNoteId = null;
+          loadNotes();
+          loadGroups();
         }
       } catch (e) {
         console.error('Failed to update');
@@ -735,20 +1136,56 @@
       try {
         const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
         if (res.ok) {
-          notes = notes.filter(n => n.id !== id);
-          renderNotes();
+          loadNotes();
+          loadGroups();
         }
       } catch (e) {
         console.error('Failed to delete');
       }
     };
 
-    // Close modal on overlay click
-    editModal.addEventListener('click', (e) => {
-      if (e.target === editModal) {
-        editModal.classList.remove('active');
-        editingNoteId = null;
-      }
+    // AI Actions
+    document.querySelectorAll('.ai-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action = btn.dataset.action;
+        const isEdit = btn.dataset.target === 'edit';
+        const textarea = isEdit ? document.getElementById('editContent') : noteInput;
+        const text = textarea.value.trim();
+        
+        if (!text) return;
+        
+        btn.classList.add('loading');
+        btn.disabled = true;
+        
+        try {
+          const res = await fetch('/api/ai/improve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, action })
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            textarea.value = data.result;
+            if (!isEdit) saveBtn.disabled = false;
+          } else {
+            const err = await res.json();
+            alert(err.error || 'AI request failed');
+          }
+        } catch (e) {
+          alert('AI request failed');
+        }
+        
+        btn.classList.remove('loading');
+        btn.disabled = false;
+      });
+    });
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('active');
+      });
     });
 
     // Init
