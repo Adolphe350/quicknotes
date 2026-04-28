@@ -8,9 +8,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'quicknotes-secret-change-in-prod';
-const AI_API_KEY = process.env.AI_API_KEY || process.env.GROQ_API_KEY || '';
-const AI_BASE_URL = process.env.AI_BASE_URL || 'https://api.groq.com/openai/v1';
-const AI_MODEL = process.env.AI_MODEL || 'llama-3.1-8b-instant';
+const AI_API_KEY = process.env.AI_API_KEY || process.env.GROQ_API_KEY || process.env.AZURE_OPENAI_API_KEY || '';
+const AI_BASE_URL = process.env.AI_BASE_URL || process.env.AZURE_OPENAI_ENDPOINT || 'https://api.groq.com/openai/v1';
+const AI_MODEL = process.env.AI_MODEL || 'gpt-4o';
+const AI_PROVIDER = process.env.AI_PROVIDER || (AI_BASE_URL.includes('azure') ? 'azure' : 'openai');
 
 // Database setup
 const db = new Database('./data/notes.db');
@@ -257,12 +258,27 @@ app.post('/api/ai/improve', auth, async (req, res) => {
   const systemPrompt = prompts[action] || prompts.improve;
   
   try {
-    const response = await fetch(`${AI_BASE_URL}/chat/completions`, {
-      method: 'POST',
-      headers: {
+    // Build URL and headers based on provider
+    let url, headers;
+    if (AI_PROVIDER === 'azure') {
+      // Azure OpenAI format
+      url = `${AI_BASE_URL}/openai/deployments/${AI_MODEL}/chat/completions?api-version=2025-01-01-preview`;
+      headers = {
+        'api-key': AI_API_KEY,
+        'Content-Type': 'application/json',
+      };
+    } else {
+      // OpenAI/Groq compatible format
+      url = `${AI_BASE_URL}/chat/completions`;
+      headers = {
         'Authorization': `Bearer ${AI_API_KEY}`,
         'Content-Type': 'application/json',
-      },
+      };
+    }
+    
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
       body: JSON.stringify({
         model: AI_MODEL,
         messages: [
