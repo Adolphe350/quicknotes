@@ -164,9 +164,27 @@
     .group-item:hover { background: rgba(255,255,255,0.05); }
     .group-item.active { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.3); }
     
-    .group-item-left { display: flex; align-items: center; gap: 10px; }
+    .group-item-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
     .group-icon { font-size: 1.1rem; }
-    .group-name { font-weight: 500; }
+    .group-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .group-item-right { display: flex; align-items: center; gap: 6px; }
+    .group-actions {
+      display: none;
+      gap: 4px;
+    }
+    .group-item:hover .group-actions { display: flex; }
+    .group-action-btn {
+      padding: 4px 6px;
+      border: none;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.15s;
+    }
+    .group-action-btn:hover { background: rgba(255,255,255,0.2); }
+    .group-action-btn.delete:hover { background: rgba(239,68,68,0.3); color: #fca5a5; }
     .group-count {
       background: rgba(255,255,255,0.1);
       padding: 2px 8px;
@@ -267,7 +285,7 @@
       margin-top: 16px;
     }
     
-    .ai-actions { display: flex; gap: 8px; }
+    .ai-actions { display: flex; gap: 8px; flex-wrap: wrap; }
     
     .ai-btn {
       padding: 8px 14px;
@@ -543,6 +561,7 @@
         <div class="logo">📝 QuickNotes Pro</div>
         <div class="user-info">
           <span class="user-name" id="userName"></span>
+          <button class="logout-btn" id="settingsBtn" title="Settings">⚙️</button>
           <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
       </header>
@@ -575,7 +594,11 @@
                 <button class="ai-btn" data-action="fix" title="Fix errors">✨ Fix</button>
                 <button class="ai-btn" data-action="improve" title="Improve writing">🚀 Improve</button>
                 <button class="ai-btn" data-action="shorten" title="Make shorter">📐 Shorten</button>
+                <button class="ai-btn" data-action="expand" title="Add more detail">📝 Expand</button>
                 <button class="ai-btn" data-action="professional" title="Professional tone">💼 Pro</button>
+                <button class="ai-btn" data-action="casual" title="Casual tone">😊 Casual</button>
+                <button class="ai-btn" data-action="summarize" title="Summarize">📋 Summary</button>
+                <button class="ai-btn" data-action="bullets" title="Convert to bullets">• Bullets</button>
               </div>
               <button class="save-btn" id="saveBtn" disabled>Save Note</button>
             </div>
@@ -600,15 +623,72 @@
         <option value="">No group</option>
       </select>
       <textarea id="editContent"></textarea>
-      <div class="ai-actions" id="editAiActions" style="margin-bottom:16px; display:none;">
+      <div class="ai-actions" id="editAiActions" style="margin-bottom:16px; display:none; flex-wrap: wrap;">
         <button class="ai-btn" data-action="fix" data-target="edit">✨ Fix</button>
         <button class="ai-btn" data-action="improve" data-target="edit">🚀 Improve</button>
         <button class="ai-btn" data-action="shorten" data-target="edit">📐 Shorten</button>
+        <button class="ai-btn" data-action="expand" data-target="edit">📝 Expand</button>
         <button class="ai-btn" data-action="professional" data-target="edit">💼 Pro</button>
+        <button class="ai-btn" data-action="casual" data-target="edit">😊 Casual</button>
+        <button class="ai-btn" data-action="summarize" data-target="edit">📋 Summary</button>
+        <button class="ai-btn" data-action="bullets" data-target="edit">• Bullets</button>
       </div>
       <div class="modal-actions">
         <button class="cancel-btn" id="cancelEdit">Cancel</button>
         <button class="update-btn" id="updateNote">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal" style="max-width: 500px;">
+      <h3>⚙️ Settings</h3>
+      
+      <div class="form-group">
+        <label>Default Category</label>
+        <select id="settingsDefaultGroup" class="group-select" style="width:100%;">
+          <option value="">None (Ungrouped)</option>
+        </select>
+        <small style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">New notes will be added to this category by default</small>
+      </div>
+      
+      <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0;">
+      
+      <h4 style="margin-bottom: 16px; font-size: 1rem;">🤖 AI Configuration</h4>
+      <p id="aiStatusText" style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 16px;"></p>
+      
+      <div class="form-group">
+        <label>AI Provider</label>
+        <select id="settingsAiProvider" class="group-select" style="width:100%;">
+          <option value="openai">OpenAI</option>
+          <option value="groq">Groq</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="azure">Azure OpenAI</option>
+          <option value="custom">Custom (OpenAI Compatible)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Model</label>
+        <select id="settingsAiModel" class="group-select" style="width:100%;">
+        </select>
+      </div>
+      
+      <div class="form-group" id="customUrlGroup" style="display:none;">
+        <label>API Base URL</label>
+        <input type="url" id="settingsAiBaseUrl" placeholder="https://api.example.com/v1">
+      </div>
+      
+      <div class="form-group">
+        <label>API Key <span id="keyStatus" style="font-size: 0.75rem; color: rgba(255,255,255,0.4);"></span></label>
+        <input type="password" id="settingsAiKey" placeholder="Enter API key (leave blank to keep existing)">
+        <small style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Your key is stored securely and only used for AI features</small>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="cancel-btn" id="cancelSettings">Cancel</button>
+        <button class="update-btn" id="saveSettings">Save Settings</button>
       </div>
     </div>
   </div>
@@ -819,7 +899,13 @@
               <span class="group-icon">${g.icon}</span>
               <span class="group-name">${escapeHtml(g.name)}</span>
             </div>
-            <span class="group-count">${g.noteCount}</span>
+            <div class="group-item-right">
+              <div class="group-actions">
+                <button class="group-action-btn edit" onclick="event.stopPropagation(); openGroupModal(${g.id})" title="Edit">✏️</button>
+                <button class="group-action-btn delete" onclick="event.stopPropagation(); deleteGroupDirect(${g.id}, '${escapeHtml(g.name)}')" title="Delete">🗑️</button>
+              </div>
+              <span class="group-count">${g.noteCount}</span>
+            </div>
           </li>
         `;
       });
@@ -934,6 +1020,21 @@
     document.getElementById('cancelGroup').addEventListener('click', () => {
       document.getElementById('groupModal').classList.remove('active');
     });
+
+    // Delete group directly from list
+    window.deleteGroupDirect = async function(groupId, groupName) {
+      if (!confirm(`Delete "${groupName}"? Notes will be moved to Ungrouped.`)) return;
+      try {
+        const res = await fetch(`/api/groups/${groupId}`, { method: 'DELETE' });
+        if (res.ok) {
+          if (selectedGroupId == groupId) selectedGroupId = null;
+          loadGroups();
+          loadNotes();
+        }
+      } catch (e) {
+        console.error('Failed to delete group');
+      }
+    };
 
     document.getElementById('saveGroupBtn').addEventListener('click', async () => {
       const name = document.getElementById('groupNameInput').value.trim();
@@ -1186,6 +1287,120 @@
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) overlay.classList.remove('active');
       });
+    });
+
+    // Settings
+    let availableProviders = [];
+    
+    document.getElementById('settingsBtn').addEventListener('click', openSettings);
+    document.getElementById('cancelSettings').addEventListener('click', () => {
+      document.getElementById('settingsModal').classList.remove('active');
+    });
+    
+    async function openSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        availableProviders = data.available_providers || [];
+        
+        // Populate default group
+        const groupSelect = document.getElementById('settingsDefaultGroup');
+        groupSelect.innerHTML = '<option value="">None (Ungrouped)</option>' +
+          groups.map(g => `<option value="${g.id}" ${data.settings.default_group_id == g.id ? 'selected' : ''}>${g.icon} ${g.name}</option>`).join('');
+        
+        // AI status
+        const statusText = document.getElementById('aiStatusText');
+        if (data.has_server_ai && !data.settings.has_ai_key) {
+          statusText.innerHTML = '✅ Server AI is configured. You can optionally add your own key below.';
+        } else if (data.settings.has_ai_key) {
+          statusText.innerHTML = '✅ Using your personal API key.';
+        } else {
+          statusText.innerHTML = '⚠️ AI not configured. Add an API key to enable AI features.';
+        }
+        
+        // Key status
+        document.getElementById('keyStatus').textContent = data.settings.has_ai_key ? '(key saved)' : '';
+        
+        // Provider
+        document.getElementById('settingsAiProvider').value = data.settings.ai_provider || 'openai';
+        updateModelOptions();
+        
+        // Model
+        if (data.settings.ai_model) {
+          document.getElementById('settingsAiModel').value = data.settings.ai_model;
+        }
+        
+        // Base URL
+        document.getElementById('settingsAiBaseUrl').value = data.settings.ai_base_url || '';
+        toggleCustomUrl();
+        
+        // Clear key input
+        document.getElementById('settingsAiKey').value = '';
+        
+        document.getElementById('settingsModal').classList.add('active');
+      } catch (e) {
+        console.error('Failed to load settings');
+      }
+    }
+    
+    function updateModelOptions() {
+      const provider = document.getElementById('settingsAiProvider').value;
+      const modelSelect = document.getElementById('settingsAiModel');
+      const providerData = availableProviders.find(p => p.id === provider);
+      
+      if (providerData && providerData.models.length > 0) {
+        modelSelect.innerHTML = providerData.models.map(m => `<option value="${m}">${m}</option>`).join('');
+        modelSelect.disabled = false;
+      } else {
+        modelSelect.innerHTML = '<option value="">Enter model in Base URL or use default</option>';
+        modelSelect.disabled = provider !== 'custom';
+      }
+      
+      toggleCustomUrl();
+    }
+    
+    function toggleCustomUrl() {
+      const provider = document.getElementById('settingsAiProvider').value;
+      document.getElementById('customUrlGroup').style.display = (provider === 'custom' || provider === 'azure') ? 'block' : 'none';
+    }
+    
+    document.getElementById('settingsAiProvider').addEventListener('change', updateModelOptions);
+    
+    document.getElementById('saveSettings').addEventListener('click', async () => {
+      const settings = {
+        default_group_id: document.getElementById('settingsDefaultGroup').value || null,
+        ai_provider: document.getElementById('settingsAiProvider').value,
+        ai_model: document.getElementById('settingsAiModel').value || null,
+        ai_base_url: document.getElementById('settingsAiBaseUrl').value || null
+      };
+      
+      const apiKey = document.getElementById('settingsAiKey').value.trim();
+      if (apiKey) {
+        settings.ai_api_key = apiKey;
+      }
+      
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(settings)
+        });
+        
+        if (res.ok) {
+          document.getElementById('settingsModal').classList.remove('active');
+          checkAI(); // Refresh AI status
+          
+          // Update default group in note input
+          if (settings.default_group_id) {
+            noteGroupSelect.value = settings.default_group_id;
+          }
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Failed to save settings');
+        }
+      } catch (e) {
+        alert('Failed to save settings');
+      }
     });
 
     // Init
